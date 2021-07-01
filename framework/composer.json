@@ -1,0 +1,21 @@
+{
+    "name": "hao-subject/framework",
+    "description": "The Hao Framework",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "huanghao",
+            "email": "1915392198@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "autoload": {
+        "files": [],
+        "psr-4": {
+            "Hao\\": "src/hao/"
+        }
+    }
+}
