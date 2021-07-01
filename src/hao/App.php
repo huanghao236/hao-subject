@@ -17,6 +17,31 @@ class App extends Container
     public $initialized = false;
 
     /**
+     * 框架目录
+     * @var string
+     */
+    protected $haoPath = '';
+
+    /**
+     * 应用根目录
+     * @var string
+     */
+    protected $rootPath = '';
+
+    /**
+     * 应用目录
+     * @var string
+     */
+    protected $appPath = '';
+
+
+    /**
+     * 配置后缀
+     * @var string
+     */
+    protected $configExt = '.php';
+
+    /**
      * 容器绑定标识
      * @var array
      */
@@ -30,8 +55,11 @@ class App extends Container
         'kernel'   =>  \App\Http\Kernel::class,//中间件集合类
     ];
 
-    public function __construct(){
-
+    public function __construct()
+    {
+        $this->haoPath = dirname(__DIR__) . DIRECTORY_SEPARATOR;
+        $this->rootPath = $this->getDefaultRootPath();
+        $this->appPath     = $this->rootPath . 'app' . DIRECTORY_SEPARATOR;
         static::setInstance($this);
         $this->instance('app', $this);
     }
@@ -63,7 +91,7 @@ class App extends Container
         //加载环境变量定义
         $this->loadEnv();
         //加载config文件夹下的所有配置
-        $files = glob(CONF_PATH . '*' . CONF_EXT);//获取指定文件夹下的指定后缀文件
+        $files = glob($this->rootPath.'config/' . '*' . $this->configExt);//获取指定文件夹下的指定后缀文件
         foreach ($files as $file){
             $this->config->load($file,pathinfo($file,PATHINFO_FILENAME));
         }
@@ -71,13 +99,13 @@ class App extends Container
         $routes = $this->config->get('config.route');
         if (is_array($routes)){
             foreach ($routes as $route) {
-                $file = ROUTE_PATH.$route.CONF_EXT;
+                $file = $this->rootPath.'routes/'.$route.$this->configExt;
                 if (file_exists($file)){
                     include $file;
                 }
             }
         }else{
-            $file = ROUTE_PATH.$routes.CONF_EXT;
+            $file = $this->rootPath.'routes/'.$routes.$this->configExt;
             if (file_exists($file)){
                 include $file;
             }
@@ -94,9 +122,19 @@ class App extends Container
      */
     public function loadEnv()
     {
-        $envFile = PUBLIC_PATH.'../.env';
+        $envFile = $this->rootPath.'.env';
         if(is_file($envFile)){
             $this->env->load($envFile);
         }
+    }
+
+    /**
+     * 获取应用根目录
+     * @access protected
+     * @return string
+     */
+    protected function getDefaultRootPath(): string
+    {
+        return dirname($this->haoPath, 4) . DIRECTORY_SEPARATOR;
     }
 }
