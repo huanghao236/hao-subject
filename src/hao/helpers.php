@@ -1,6 +1,7 @@
 <?php
 use Hao\Container;
-use Hao\Env;
+use Hao\facade\Config;
+use Hao\facade\Env;
 if (! function_exists('app')) {
 
     /**
@@ -30,10 +31,7 @@ if (!function_exists('config')) {
      */
     function config($key = '')
     {
-        if (is_null($key)) {
-            return app('config');
-        }
-        return app('config')->get($key);
+        return Config::get($key);
     }
 }
 
@@ -47,7 +45,7 @@ if (! function_exists('env')) {
      */
     function env(string $key,$default = null)
     {
-        $value = Env::getStatic($key);
+        $value = Env::get($key);
         if (empty($value) && !is_null($default)){
             return $default;
         }

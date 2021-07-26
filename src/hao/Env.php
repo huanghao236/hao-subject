@@ -46,19 +46,6 @@ class Env implements ArrayAccess
     }
 
     /**
-     * 获取配置
-     * @param string $key
-     * @return mixed|string
-     */
-    public static function getStatic(string $key)
-    {
-        if (isset((new self())->data[$key])){
-            return (new self())->data[$key];
-        }
-        return '';
-    }
-
-    /**
      * 设置环境变量值
      * @param string|array  $env 环境变量名
      * @param null $value        值
