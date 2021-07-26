@@ -1,6 +1,6 @@
 <?php
 use Hao\Container;
-
+use Hao\Env;
 if (! function_exists('app')) {
 
     /**
@@ -42,11 +42,15 @@ if (! function_exists('env')) {
     /**
      * 获取环境变量的值
      * @param  string  $key 参数名
+     * @param  mixed   $default
      * @return mixed|object
-     * @throws Exception
      */
-    function env(string $key)
+    function env(string $key,$default = null)
     {
-        return app('env')->get($key);
+        $value = Env::getStatic($key);
+        if (empty($value) && !is_null($default)){
+            return $default;
+        }
+        return $value;
     }
 }
