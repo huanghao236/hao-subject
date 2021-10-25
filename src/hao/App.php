@@ -10,6 +10,7 @@ namespace Hao;
  * @property Request    $request
  * @property Http       $http
  * @property Env        $env
+ * @property Console    $console
  */
 class App extends Container
 {
@@ -32,7 +33,7 @@ class App extends Container
      * 应用目录
      * @var string
      */
-    protected $appPath = '';
+    public $appPath = '';
 
 
     /**
@@ -52,7 +53,8 @@ class App extends Container
         'route'     =>  Route::class,//路由类
         'request'   =>  Request::class,//请求管理类
         'env'       =>  Env::class,//Env管理类
-        'kernel'   =>  \App\Http\Kernel::class,//中间件集合类
+        'kernel'    =>  \App\Http\Kernel::class,//中间件集合类
+        'console'   =>  Console::class,//命令执行类
     ];
 
     public function __construct()

@@ -1,0 +1,21 @@
+<?php
+namespace {{ namespace }};
+
+use Hao\Model;
+
+class {{ class }} extends Model
+{
+    protected $table = '';//表名
+
+    //关联查询 一对多
+    /*public function testHasMany()
+    {
+        return $this->hasMany(关联模型,关联模型表关联字段,当前模型关联字段);
+    }*/
+
+    //关联查询 一对一
+    /*public function testHasOne()
+    {
+        return $this->hasOne(关联模型,关联模型表关联字段,当前模型关联字段);
+    }*/
+}
