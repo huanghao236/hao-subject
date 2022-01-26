@@ -97,12 +97,12 @@ class Route
      */
     public function setRule(string $rule, $route, $type = '*', $group = '')
     {
-        $rule = $group ? $group . '/' . $rule : $rule;
+        $rule  = $group ? $group . '/' . $rule : $rule;
         $route = $this->attributes['namespace'] ? $this->attributes['namespace'] . '\\' . $route : $route;
-        if (isset($this->attributes['prefix'])){
+        if (isset($this->attributes['prefix'])) {
             $this->rule[$this->attributes['prefix']][$type][$rule] = $route;
             $this->rule[$this->attributes['prefix']]['middleware'] = $this->attributes['middleware'];
-        }else{
+        } else {
             $this->rule[$type][$rule] = $route;
         }
     }
@@ -123,10 +123,10 @@ class Route
         if ($method == 'routeQuote') {
             $file = app()->rootPath . '/' . $parameters[0];
             if (file_exists($file)) {
-                if (!isset($this->attributes['prefix'])){
-                    if (isset($this->rule['middleware'])){
-                        $this->rule['middleware'] = array_merge($this->rule['middleware'],$this->attributes['middleware']);
-                    }else{
+                if (!isset($this->attributes['prefix'])) {
+                    if (isset($this->rule['middleware'])) {
+                        $this->rule['middleware'] = array_merge($this->rule['middleware'], $this->attributes['middleware']);
+                    } else {
                         $this->rule['middleware'] = $this->attributes['middleware'];
                     }
                 }
@@ -135,7 +135,7 @@ class Route
             $this->attributes = [];
         }
         if (in_array($method, $this->allowedAttributes)) {
-            if ($method == 'middleware'){
+            if ($method == 'middleware') {
                 return $this->attributes($method, is_array($parameters[0]) ? $parameters[0] : $parameters);
             }
             return $this->attributes($method, $parameters[0]);
@@ -156,17 +156,20 @@ class Route
         $pathInfo = $request->pathInfo();//请求地址
         $prefix   = explode('/', $pathInfo);
 
-        if (!isset($prefix[1])){
-            $pathInfo = '/';
-        }
         $rule = $this->rule[$prefix[0]] ?? $this->rule;
         if (!isset($rule[$method])) {
             dd('请求方式不存在');
         }
+
+        if (isset($this->rule[$prefix[0]])) {
+            $pathInfo = empty($prefix[1]) ? '/' : $prefix[1];
+        }
+
         if (!isset($rule[$method][$pathInfo])) {
             dd('请求地址不存在');
         }
-        $dispatch = new Dispatch($request, $app, $this->rule[$method][$pathInfo], $routeMiddleware,$rule['middleware']);
+
+        $dispatch = new Dispatch($request, $app, $rule[$method][$pathInfo], $routeMiddleware, $rule['middleware']);
         return $dispatch->exec();
     }
 
