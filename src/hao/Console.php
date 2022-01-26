@@ -87,7 +87,7 @@ class Console
     /**
      * 执行任务方法
      */
-    public function query()
+    private function queue()
     {
 
     }

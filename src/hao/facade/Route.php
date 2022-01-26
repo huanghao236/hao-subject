@@ -13,6 +13,10 @@ use Hao\Facade;
  * @method static Route get(string $rule, mixed $route) 注册GET路由
  * @method static Route post(string $rule, mixed $route) 注册POST路由
  * @method static Route group(string|\Closure $name, mixed $route = null) 注册路由分组
+ * @method static Route prefix(string $prefix)
+ * @method static Route middleware(string|array $middleware)
+ * @method static Route namespace(string $namespace)
+ * @method static Route routeQuote(string $routeQuote)
  *
  */
 class Route extends Facade

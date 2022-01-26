@@ -1,4 +1,5 @@
 <?php
+
 namespace Hao\route;
 
 use Hao\App;
@@ -36,48 +37,65 @@ class Dispatch
 
     protected $app;
 
-    public function __construct(Request $request,App $app,$dispatch,$routeMiddleware)
+    public function __construct(Request $request, App $app, $dispatch, $routeMiddleware, $middleware)
     {
-        $this->request          = $request;
-        $this->dispatch         = $dispatch;
-        $this->app              = $app;
-        $this->routeMiddleware  = $routeMiddleware;
+        $this->request         = $request;
+        $this->dispatch        = $dispatch;
+        $this->app             = $app;
+        $this->routeMiddleware = $routeMiddleware;
+        $this->middleware      = $middleware;
     }
 
 
-    public function exec(){
-        $home = $this->request->env('HOME');
-        if (strstr($this->dispatch,'@')){
-            $dispatch = explode('@',$this->dispatch);
-            $class = $home.$dispatch[0];
-            if (class_exists($class)){
+    public function exec()
+    {
+        if (strstr($this->dispatch, '@')) {
+            $dispatch = explode('@', $this->dispatch);
+            $class    = $dispatch[0];
+            if (class_exists($class)) {
                 // 实例化控制器
                 $instance = $this->app->make($class);
-                if ($instance->middleware){
-                    foreach ($instance->middleware as $key => $val){
-                        if (isset($this->routeMiddleware[$key])){
-                            if (isset($val['except']) && is_array($val['except'])){
+                $middleware = [];
+                //检测应用服务中是否存在中间件配置
+                if ($this->middleware){
+                    foreach ($this->middleware as $k => $v) {
+                        if (isset($this->routeMiddleware[$v])){
+                            $middleware[] = $this->routeMiddleware[$v];
+                        }
+                    }
+                }
+                //检测控制器中是否存在中间件配置
+                if ($instance->middleware) {
+                    foreach ($instance->middleware as $key => $val) {
+                        if (isset($this->routeMiddleware[$key])) {
+                            if (isset($val['except']) && is_array($val['except'])) {
                                 $except = array_filter($val['except']);
-                                if(!empty($except) && !in_array($this->dispatch,$val['except'])){
-                                    $this->middleware[] = $this->routeMiddleware[$key];
+                                if (!empty($except) && !in_array($this->dispatch, $val['except'])) {
+                                    $middleware[] = $this->routeMiddleware[$key];
                                 }
                             }
-                            if (isset($val['only']) && is_array($val['only']) && in_array($this->dispatch,$val['only'])){
-                                $this->middleware[] = $this->routeMiddleware[$key];
+                            if (isset($val['only']) && is_array($val['only']) && in_array($this->dispatch, $val['only'])) {
+                                $middleware[] = $this->routeMiddleware[$key];
                             }
                         }
                     }
-                    return (new Pipeline($this->app))->send($this->request)->through($this->middleware)->then(function ()use ($instance,$dispatch){
-                        $data = $this->app->invokeReflectMethod($instance, new ReflectionMethod($instance, $dispatch[1]));
-                        return $this->autoResponse($data);
-                    });
+                }
+                //如果有路由中间件，则需先走中间件
+                if ($middleware){
+                    return (new Pipeline($this->app))->send($this->request)->through($middleware)
+                                                     ->then(function () use ($instance, $dispatch) {
+                                                         $data = $this->app->invokeReflectMethod($instance, new ReflectionMethod($instance, $dispatch[1]));
+                                                         return $this->autoResponse($data);
+                                                     });
                 }else{
                     $data = $this->app->invokeReflectMethod($instance, new ReflectionMethod($instance, $dispatch[1]));
                     return $this->autoResponse($data);
                 }
+
             }
-        }else{
-            echo '404';exit();
+        } else {
+            echo '404';
+            exit();
         }
     }
 

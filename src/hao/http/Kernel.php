@@ -11,23 +11,6 @@ use Hao\route\Dispatch;
 class Kernel
 {
     /**
-     * 全局中间件
-     * @var array
-     */
-    protected $middleware = [
-
-    ];
-
-
-    /**
-     * 路由中间件
-     * @var array
-     */
-    protected $routeMiddleware = [
-
-    ];
-
-    /**
      * @var App
      */
     protected $app;

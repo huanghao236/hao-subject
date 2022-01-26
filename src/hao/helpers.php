@@ -26,8 +26,7 @@ if (!function_exists('config')) {
     /**
      * 获取和设置配置参数
      * @param string|array $key  参数名
-     * @return Closure|Container|mixed|object
-     * @throws Exception
+     * @return array|string
      */
     function config($key = '')
     {
