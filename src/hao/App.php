@@ -101,6 +101,7 @@ class App extends Container
         foreach ($files as $file) {
             $this->config->load($file, pathinfo($file, PATHINFO_FILENAME));
         }
+
         $this->provider();
     }
 
