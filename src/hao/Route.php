@@ -162,7 +162,8 @@ class Route
         }
 
         if (isset($this->rule[$prefix[0]])) {
-            $pathInfo = empty($prefix[1]) ? '/' : $prefix[1];
+            unset($prefix[0]);
+            $pathInfo = isset($prefix[1]) ? implode('/',$prefix) : '/';
         }
 
         if (!isset($rule[$method][$pathInfo])) {
