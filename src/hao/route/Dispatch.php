@@ -58,9 +58,15 @@ class Dispatch
                 $middleware = [];
                 //检测应用服务中是否存在中间件配置
                 if ($this->middleware){
-                    foreach ($this->middleware as $k => $v) {
+                    foreach ($this->middleware as $v) {
                         if (isset($this->routeMiddleware[$v])){
-                            $middleware[] = $this->routeMiddleware[$v];
+                            if (is_array($this->routeMiddleware[$v])){
+                                foreach ($this->routeMiddleware[$v] as $routeMiddleware){
+                                    $middleware[] = $routeMiddleware;
+                                }
+                            }else{
+                                $middleware[] = $this->routeMiddleware[$v];
+                            }
                         }
                     }
                 }
